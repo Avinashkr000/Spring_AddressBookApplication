@@ -1,6 +1,8 @@
 package com.bridgelabz.springaddressbookapplication.service;
 
+
 import com.bridgelabz.springaddressbookapplication.dto.AddressBookDTO;
+import com.bridgelabz.springaddressbookapplication.exceptionhandler.AddressBookNotFoundException;
 import com.bridgelabz.springaddressbookapplication.model.AddressBook;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -31,10 +33,14 @@ public class AddressBookService {
         return entityManager.createQuery("SELECT a FROM AddressBook a", AddressBook.class).getResultList();
     }
 
-    @Transactional
-    public AddressBook getEntryById(Long id) {  // Fix: Marked as @Transactional
-        return entityManager.find(AddressBook.class, id);
+    public AddressBook getEntryById(Long id) {
+        AddressBook entry = entityManager.find(AddressBook.class, id);
+        if (entry == null) {
+            throw new AddressBookNotFoundException("AddressBook entry with ID " + id + " not found.");
+        }
+        return entry;
     }
+
 
     @Transactional
     public AddressBook updateEntry(Long id, AddressBookDTO dto) {
