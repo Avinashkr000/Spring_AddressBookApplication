@@ -2,44 +2,48 @@ package com.bridgelabz.springaddressbookapplication.service;
 
 import com.bridgelabz.springaddressbookapplication.dto.AddressBookDTO;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AddressBookService {
-    private final List<AddressBookDTO> addressList = new ArrayList<>();
-    private long idCounter = 1;
+
+    private final List<AddressBookDTO> addressBookList = new ArrayList<>();
+    private Long idCounter = 1L;
 
     public AddressBookDTO addEntry(String name) {
-        AddressBookDTO entry = new AddressBookDTO(idCounter++, name);
-        addressList.add(entry);
-        return entry;
+        AddressBookDTO newEntry = new AddressBookDTO(idCounter++, name);
+        addressBookList.add(newEntry);
+        return newEntry;
     }
 
     public List<AddressBookDTO> getAllEntries() {
-        return addressList;
+        return addressBookList;
     }
 
     public AddressBookDTO getEntryById(Long id) {
-        return addressList.stream()
+        return addressBookList.stream()
                 .filter(entry -> entry.getId().equals(id))
                 .findFirst()
                 .orElse(null);
     }
 
-    public AddressBookDTO updateEntry(Long id, String newName) {
-        for (AddressBookDTO entry : addressList) {
-            if (entry.getId().equals(id)) {
-                addressList.remove(entry);
-                AddressBookDTO updatedEntry = new AddressBookDTO(id, newName);
-                addressList.add(updatedEntry);
-                return updatedEntry;
-            }
+    public AddressBookDTO updateEntry(Long id, String name) {
+        Optional<AddressBookDTO> optionalEntry = addressBookList.stream()
+                .filter(entry -> entry.getId().equals(id))
+                .findFirst();
+
+        if (optionalEntry.isPresent()) {
+            AddressBookDTO entry = optionalEntry.get();
+            entry.setName(name);
+            return entry;
         }
         return null;
     }
 
     public boolean deleteEntry(Long id) {
-        return addressList.removeIf(entry -> entry.getId().equals(id));
+        return addressBookList.removeIf(entry -> entry.getId().equals(id));
     }
 }
