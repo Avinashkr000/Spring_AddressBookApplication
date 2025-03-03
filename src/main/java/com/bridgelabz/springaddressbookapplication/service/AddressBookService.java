@@ -1,5 +1,6 @@
 package com.bridgelabz.springaddressbookapplication.service;
 
+import com.bridgelabz.springaddressbookapplication.dto.AddressBookDTO;
 import com.bridgelabz.springaddressbookapplication.model.AddressBook;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -16,13 +17,13 @@ public class AddressBookService {
     private EntityManager entityManager;
 
     @Transactional
-    public AddressBook addEntry(String name) {
+    public AddressBook addEntry(AddressBookDTO dto) {
         AddressBook entry = new AddressBook();
-        entry.setName(name);
+        entry.setName(dto.getName());
         entityManager.persist(entry);
-        log.info("Added entry: {}", entry);
         return entry;
     }
+
 
     @Transactional
     public List<AddressBook> getAllEntries() {  // Fix: Marked as @Transactional
@@ -36,11 +37,10 @@ public class AddressBookService {
     }
 
     @Transactional
-    public AddressBook updateEntry(Long id, String newName) {
+    public AddressBook updateEntry(Long id, AddressBookDTO dto) {
         AddressBook entry = entityManager.find(AddressBook.class, id);
         if (entry != null) {
-            entry.setName(newName);
-            log.info("Updated entry: {}", entry);
+            entry.setName(dto.getName());
         }
         return entry;
     }
